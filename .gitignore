@@ -1,0 +1,11 @@
+/target/
+/build/
+*.profraw
+*.profdata
+*.lcov
+*.tap
+.DS_Store
+
+Cargo.lock
+
+vendor/

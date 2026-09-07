@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "type": "cppdbg",
+            "request": "launch",
+            "name": "GDB helloworld-rust-binding.so",
+            "cwd": "${workspaceFolder}",
+            "program": "/usr/bin/afb-binder",
+            "args": [
+                "-vvv",
+                "-b",
+                "${workspaceFolder}/target/release/helloworld-rust-binding.so"
+            ]
+        }
+    ]
+}

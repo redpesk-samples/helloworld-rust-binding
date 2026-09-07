@@ -1,0 +1,33 @@
+# This file is part of the redpesk project.
+include:
+  - 'https://raw.githubusercontent.com/redpesk-devtools/gitlab-ci-factory-templates/refs/heads/master/rp-cli-template-ci.yml'
+
+variables:
+  RP_VERBOSE: "true"
+
+stages:
+  - lint
+  - build
+  - redtest
+
+default:
+  tags:
+    - redpesk-binding-ci
+
+lint:
+  stage: lint
+  script:
+    - bash -x tests/ci/lint.sh
+  allow_failure: true
+
+build:
+  stage: build
+  extends:
+    - .rp-cli-build
+
+redtest:
+  stage: redtest
+  needs:
+    - build
+  extends:
+    - .rp-cli-start-test

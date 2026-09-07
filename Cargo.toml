@@ -1,0 +1,22 @@
+[package]
+name = "helloworld-rust-binding"
+version = "2.0.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Rust implementation of the redpesk helloworld AFB binding"
+repository = "https://github.com/redpesk-samples/helloworld-rust-binding"
+
+[workspace]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+afbv4 = { git = "https://github.com/redpesk-common/afb-librust", branch = "master" }
+
+[lib]
+name = "helloworld_rust_binding"
+crate-type = ["cdylib"]
+path = "src/lib.rs"

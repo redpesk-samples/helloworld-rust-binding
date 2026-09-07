@@ -1,0 +1,21 @@
+%YAML 1.2
+---
+# .rpconfig/manifest.yml documentation: https://docs.redpesk.bzh/docs/en/master/developer-guides/manifest.yml.html
+rp-manifest: 1
+id: helloworld-rust-binding
+version: 2.0.0
+description: Provides the Rust equivalent of the helloworld AFB binding
+author: Ronan Le Martret <ronan.lemartret@iot.bzh>
+license: APL2.0
+
+targets:
+  - target: main
+    content:
+      type: application/vnd.agl.service
+      src: lib/helloworld-rust-binding.so
+    provided-api:
+      - name: helloworld
+        value: ws
+    required-binding:
+      - name: lib/helloworld-rust-binding.so
+        value: local
