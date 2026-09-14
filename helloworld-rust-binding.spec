@@ -5,6 +5,8 @@ License: MIT
 Summary: Rust helloworld service used in redpesk
 URL:     https://github.com/redpesk-samples/helloworld-rust-binding
 Source:  %{name}-%{version}.tar.gz
+Source1: vendor.tar.bz2
+Source2: cargo_config
 
 %bcond_with no_coverage
 
@@ -38,6 +40,10 @@ built with LLVM coverage instrumentation.
 %prep
 %autosetup -p 1
 
+tar -xjf %{SOURCE1}
+mkdir -p .cargo
+cp %{SOURCE2} .cargo/config
+
 %build
 export CARGO_TARGET_DIR="%{_builddir}/%{name}-%{version}/target"
 
@@ -45,7 +51,12 @@ export CARGO_TARGET_DIR="%{_builddir}/%{name}-%{version}/target"
 export RUSTFLAGS="-C instrument-coverage -C debuginfo=2 -C link-dead-code"
 %endif
 
-cargo build --release --package helloworld-rust-binding
+cargo build \
+            --offline \
+            --locked \
+            --release \
+            --package helloworld-rust-binding \
+            --target %{_arch}-unknown-linux-gnu
 
 %if %{without no_coverage}
 cargo test --release --all-targets --all-features
@@ -54,7 +65,7 @@ cargo test --release --all-targets --all-features
 %install
 install -d %{buildroot}%{_afmappdir}/%{name}/lib
 install -d %{buildroot}%{_afmappdir}/%{name}/.rpconfig
-install -m 0755 target/release/libhelloworld_rust_binding.so \
+install -m 0755 target/release/helloworld_rust_binding.so \
     %{buildroot}%{_afmappdir}/%{name}/lib/helloworld-rust-binding.so
 install -m 0644 rpconfig/manifest.yml \
     %{buildroot}%{_afmappdir}/%{name}/.rpconfig/manifest.yml
@@ -63,7 +74,7 @@ install -m 0644 rpconfig/manifest.yml \
 # redtest package: keep a private copy of the instrumented binding next to
 # the tests.
 install -d %{buildroot}%{redtest_dir}/binding/lib
-install -m 0755 target/release/libhelloworld_rust_binding.so \
+install -m 0755 target/release/helloworld_rust_binding.so \
     %{buildroot}%{redtest_dir}/binding/lib/helloworld-rust-binding.so
 install -m 0755 redtest/run-redtest %{buildroot}%{redtest_dir}/run-redtest
 install -m 0644 tests/tests.py %{buildroot}%{redtest_dir}/tests.py
