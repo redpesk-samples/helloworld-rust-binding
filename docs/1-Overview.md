@@ -45,7 +45,7 @@ Cargo builds the project as a `cdylib`. The resulting shared library is loaded b
                  +---------------------------+
 ```
 
-The binding does not depend on external hardware. It can therefore run on a compatible development host or on a redpesk target.
+The binding itself does not depend on external hardware. It can therefore be executed on a development host, in a redpesk development environment (like using the [localbuilder](https://docs.redpesk.bzh/docs/en/master/getting_started/local_builder_quickstart/docs/quickstart/0_quick-installation.html)), or on a redpesk target (QEMU, aarch64 or x86_64 [target](https://docs.redpesk.bzh/docs/en/master/download/boards/docs/boards/download-images.html)).
 
 ## Binding lifecycle
 
@@ -73,7 +73,7 @@ When a client calls `hello` or `sum`, the binding:
 
 The event push is attempted before request validation, so rejected `sum` requests can still generate a `verb_called` event.
 
-## API compatibility
+## Shared API contract
 
 The Rust implementation exposes:
 
@@ -83,7 +83,7 @@ The Rust implementation exposes:
 - verb `info`;
 - event `helloworld/verb_called`.
 
-The three samples expose the same API surface and the same core request/reply semantics. Language-specific implementation details are intentionally not reproduced when they are not part of the AFB API contract.
+The C/C++, Python and Rust samples expose the same public verbs and event and keep the same essential request semantics. Language-specific implementation details are intentionally not reproduced when they are not part of the shared AFB API contract.
 
 The `info` metadata is embedded directly in `src/lib.rs` as a static JSON document and returned by the explicit `info` callback.
 
@@ -102,7 +102,7 @@ src/lib.rs                       Rust binding implementation
 Cargo.toml                       Cargo package and dependency metadata
 Makefile                         build, test and formatting helpers
 rpconfig/manifest.yml            redpesk application manifest
-redtest/run-redtest              installed redtest entry point
+redtest/run-redtest              redtest entry point
 tests/                           functional tests and CI helper
 docs/                            project documentation
 helloworld-rust-binding.spec     RPM packaging

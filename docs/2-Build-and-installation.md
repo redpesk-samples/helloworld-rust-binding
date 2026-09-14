@@ -2,9 +2,16 @@
 
 ## Prerequisites
 
-The recommended development environment is the redpesk SDK, which provides the AFB development stack and the packages required to build bindings.
+Two development setups can be used with this sample:
 
-For more information, see [Setup your build host](https://docs.redpesk.bzh/docs/en/master/getting_started/host-configuration/docs/1-Setup-your-build-host.html) and [Getting the binder](https://docs.redpesk.bzh/docs/en/master/redpesk-os/afb-binder/afb-getting.html) in the official redpesk documentation.
+- the redpesk SDK container, which provides an isolated OCI-based development environment;
+- a redpesk framework built and installed locally from sources.
+
+For the container-based setup, see the [SDK container overview](https://docs.redpesk.bzh/docs/en/master/redpesk-os/sdk-container/docs/0-overview.html) and follow the [SDK container setup](https://docs.redpesk.bzh/docs/en/master/redpesk-os/sdk-container/docs/1-setup.html).
+
+For a host installation, follow [Build framework on your computer](https://docs.redpesk.bzh/docs/en/master/redpesk-os/host-build/README.html) to build and install the AFB runtime and development environment from sources.
+
+The sample additionally requires a Rust toolchain. For binder usage, see [Getting the binder](https://docs.redpesk.bzh/docs/en/master/redpesk-os/afb-binder/afb-getting.html).
 
 The RPM specification declares the main build dependencies:
 
@@ -14,41 +21,7 @@ The RPM specification declares the main build dependencies:
 - `json-c` development files;
 - AFB Binding development files.
 
-When the redpesk source repositories are configured, the RPM build dependencies can be installed with:
-
-```bash
-dnf builddep helloworld-rust-binding
-```
-
-The `afbv4` dependency is resolved by Cargo from the `afb-librust` Git repository declared in `Cargo.toml`.
-
-## Install from packages
-
-On a system configured with the appropriate redpesk repositories, install the binding with:
-
-```bash
-dnf install helloworld-rust-binding
-```
-
-The packaged application is installed under:
-
-```text
-/usr/redpesk/helloworld-rust-binding/
-```
-
-The shared library is located at:
-
-```text
-/usr/redpesk/helloworld-rust-binding/lib/helloworld-rust-binding.so
-```
-
-To verify the installed files, run:
-
-```bash
-rpm -ql helloworld-rust-binding
-```
-
-For package deployment on a redpesk target, refer to the [redpesk application deployment documentation](https://docs.redpesk.bzh/docs/en/master/getting_started/docs/deployment.html).
+The `afbv4` dependency is resolved by Cargo from the `afb-librust` Git repository declared in `Cargo.toml` for normal source builds.
 
 ## Build from sources
 
@@ -111,3 +84,45 @@ Remove Cargo build artifacts with:
 ```bash
 make clean
 ```
+
+## Build the RPM package
+
+RPM builds are handled by the redpesk factory tooling. The repository GitLab CI build job uses the official redpesk factory CI template and builds the package from `helloworld-rust-binding.spec`.
+
+The same package can be built through a redpesk factory or a configured [redpesk local builder](https://docs.redpesk.bzh/docs/en/master/getting_started/local_builder_quickstart/docs/quickstart/0_quick-installation.html).
+
+The RPM build uses the packaged Cargo vendor archive so that dependency resolution can run offline inside the build environment.
+
+When using an RPM-based redpesk development environment, install the package build dependencies with:
+
+```bash
+dnf builddep helloworld-rust-binding
+```
+
+## Install from packages
+
+On a system configured with the appropriate redpesk repositories, install the binding with:
+
+```bash
+dnf install helloworld-rust-binding
+```
+
+The packaged application is installed under:
+
+```text
+/usr/redpesk/helloworld-rust-binding/
+```
+
+The shared library is located at:
+
+```text
+/usr/redpesk/helloworld-rust-binding/lib/helloworld-rust-binding.so
+```
+
+To verify the installed files, run:
+
+```bash
+rpm -ql helloworld-rust-binding
+```
+
+For package deployment on a redpesk target, refer to the [redpesk application deployment documentation](https://docs.redpesk.bzh/docs/en/master/getting_started/docs/deployment.html).

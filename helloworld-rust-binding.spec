@@ -1,3 +1,5 @@
+%global debug_package %{nil}
+
 Name:    helloworld-rust-binding
 Version: 2.0.0
 Release: 1%{?dist}
@@ -65,23 +67,21 @@ cargo test --release --all-targets --all-features
 %install
 install -d %{buildroot}%{_afmappdir}/%{name}/lib
 install -d %{buildroot}%{_afmappdir}/%{name}/.rpconfig
-install -m 0755 target/release/helloworld_rust_binding.so \
+install -m 0755 target/%{_arch}-unknown-linux-gnu/release/libhelloworld_rust_binding.so \
     %{buildroot}%{_afmappdir}/%{name}/lib/helloworld-rust-binding.so
 install -m 0644 rpconfig/manifest.yml \
     %{buildroot}%{_afmappdir}/%{name}/.rpconfig/manifest.yml
 
 %if %{without no_coverage}
-# redtest package: keep a private copy of the instrumented binding next to
-# the tests.
-install -d %{buildroot}%{redtest_dir}/binding/lib
-install -m 0755 target/release/helloworld_rust_binding.so \
-    %{buildroot}%{redtest_dir}/binding/lib/helloworld-rust-binding.so
-install -m 0755 redtest/run-redtest %{buildroot}%{redtest_dir}/run-redtest
-install -m 0644 tests/tests.py %{buildroot}%{redtest_dir}/tests.py
+# The main package already contains the instrumented binding used by redtest.
+install -Dm0755 redtest/run-redtest %{buildroot}%{redtest_dir}/run-redtest
+install -Dm0644 tests/tests.py %{buildroot}%{redtest_dir}/tests.py
 %endif
 
 %files
 %defattr(-,root,root)
+%license LICENSE
+%doc README.md CHANGELOG
 %dir %{_afmappdir}/%{name}
 %{_afmappdir}/%{name}/lib/
 %{_afmappdir}/%{name}/.rpconfig/
@@ -91,5 +91,6 @@ install -m 0644 tests/tests.py %{buildroot}%{redtest_dir}/tests.py
 %defattr(-,root,root)
 %{redtest_dir}/run-redtest
 %{redtest_dir}/tests.py
-%{redtest_dir}/binding/
 %endif
+
+%changelog

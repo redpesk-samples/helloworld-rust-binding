@@ -4,7 +4,7 @@ set -euo pipefail
 PACKAGE_NAME="helloworld-rust-binding"
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 LOG_DIR="/var/log/redtest/${PACKAGE_NAME}"
-LIB_DIR="${SCRIPT_DIR}/binding/lib"
+LIB_DIR="/usr/redpesk/${PACKAGE_NAME}/lib"
 
 mkdir -p "${LOG_DIR}"
 

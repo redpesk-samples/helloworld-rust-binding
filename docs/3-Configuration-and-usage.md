@@ -2,11 +2,11 @@
 
 ## Runtime configuration
 
-`helloworld-rust-binding` does not require an application-specific runtime configuration file. It is a loadable AFB V4 binding and is configured through the `afb-binder` command line.
+`helloworld-rust-binding` does not require an application-specific runtime configuration file. For source-tree development, it is a loadable AFB V4 binding configured through the `afb-binder` command line.
 
 For the complete binder command-line interface, refer to the [`afb-binder` manual](https://docs.redpesk.bzh/docs/en/master/redpesk-os/afb-binder/afb-binder.1.html).
 
-When installed as a redpesk package, `.rpconfig/manifest.yml` declares the packaged service and the provided `helloworld` API.
+When installed as a redpesk package, `manifest.yml` describes the packaged service and declares the `helloworld` API to the redpesk application framework. It is stored as `rpconfig/manifest.yml` in the sources and installed as `.rpconfig/manifest.yml` in the application directory.
 
 ## Run a source build
 
@@ -18,72 +18,27 @@ afb-binder -vvv -b ./target/release/helloworld-rust-binding.so
 
 Unless another port is configured, the binder listens on port `1234`.
 
-## Run the installed binding
+## Run the installed service
 
-For an RPM installation, load the packaged shared library:
+Start the packaged redpesk application through the application framework:
 
 ```bash
-afb-binder -vvv -b /usr/redpesk/helloworld-rust-binding/lib/helloworld-rust-binding.so
+afm-util start helloworld-rust-binding
 ```
+
+Loading the installed shared library directly with `afb-binder` can be useful for development or debugging, but it bypasses the normal application-framework startup path and should not be used as the standard packaged-service workflow.
 
 ## Call the API
 
-Use `afb-client` from another terminal.
-
-Call `hello` without an argument:
+When the source build is started manually with `afb-binder` on the default port, use `afb-client` from another terminal:
 
 ```bash
 afb-client -H localhost:1234/api helloworld hello
 ```
 
-The reply contains:
+A packaged application started through `afm-util` may expose the API through a transport selected by the application framework, such as a Unix socket, so do not assume that `localhost:1234` is available in that mode. Use the endpoint provided by the application configuration.
 
-```text
-Hello world!
-```
-
-Call `hello` with a value:
-
-```bash
-afb-client -H localhost:1234/api helloworld hello Rust
-```
-
-The reply contains:
-
-```text
-Hello Rust!
-```
-
-Call `sum` with a JSON array of integers:
-
-```bash
-afb-client -H localhost:1234/api helloworld sum '[1,2,3,4]'
-```
-
-The returned value is `10`.
-
-Retrieve the static binding metadata with:
-
-```bash
-afb-client -H localhost:1234/api helloworld info
-```
-
-The complete request and response contract is described in the [Api reference](./4-Api-reference.html).
-
-## Events
-
-Calls to `hello` and `sum` publish the `helloworld/verb_called` event. The caller is automatically subscribed the first time one of these verbs is called in its session.
-
-For example, calling `hello` produces an event whose payload is the called verb name:
-
-```json
-{
-  "event": "helloworld/verb_called",
-  "data": "hello"
-}
-```
-
-Subsequent calls reuse the session state and do not repeat the subscription setup.
+Calls to the application verbs also publish the `helloworld/verb_called` event. See the [API reference](./4-Api-reference.html) for the complete verb, request, reply and event contract.
 
 ## Running on a redpesk target
 
@@ -107,7 +62,7 @@ For an installed package, verify its contents with:
 rpm -ql helloworld-rust-binding
 ```
 
-Increase binder verbosity when diagnosing API loading or request handling issues:
+Increase binder verbosity when diagnosing local API loading or request handling issues:
 
 ```bash
 afb-binder -vvvv -b ./target/release/helloworld-rust-binding.so

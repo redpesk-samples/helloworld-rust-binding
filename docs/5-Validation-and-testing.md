@@ -10,7 +10,7 @@ The tests cover:
 
 - `hello` replies with and without parameters;
 - AFB string conversion for scalar, object and array values;
-- signed 64-bit boundary values;
+- signed 64-bit boundary and wrapping behavior;
 - rejection of integers outside the supported AFB range at the client boundary;
 - complete `hello` replies for long string arguments;
 - `verb_called` event emission for `hello` and `sum`;
@@ -22,7 +22,9 @@ The tests cover:
 
 The functional tests use `afb-test-py` and `afb-libpython`. The binding itself must already be buildable with the dependencies described in [Build and installation](./2-Build-and-installation.html).
 
-On a redpesk SDK or compatible development system, install the Python test packages with:
+Prepare one of the development environments described in [Build and installation](./2-Build-and-installation.html) before running the functional tests.
+
+When using an RPM-based redpesk development environment, the Python test packages can alternatively be installed with:
 
 ```bash
 sudo dnf install afb-libpython afb-test-py
@@ -74,11 +76,12 @@ The repository-level markdown configuration excludes the Apache `LICENSE` text f
 
 ## Redtest package
 
-The RPM specification provides the `helloworld-rust-binding-redtest` subpackage. It contains:
+The RPM specification provides the `helloworld-rust-binding-redtest` subpackage. The default coverage-enabled RPM build instruments the binding installed by the main `helloworld-rust-binding` package. The redtest subpackage contains:
 
-- a private copy of `helloworld-rust-binding.so` used by the tests;
 - `tests.py`;
 - the `run-redtest` entry point.
+
+The runner reuses `/usr/redpesk/helloworld-rust-binding/lib/helloworld-rust-binding.so` from the main package instead of packaging a duplicate copy.
 
 Install it on a compatible redpesk test environment with:
 
