@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PACKAGE_NAME="helloworld-rust-binding"
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+LOG_DIR="/var/log/redtest/${PACKAGE_NAME}"
+LIB_DIR="/usr/redpesk/${PACKAGE_NAME}/lib"
+
+mkdir -p "${LOG_DIR}"
+
+echo "--- Start Python tests for ${PACKAGE_NAME} ---"
+LD_LIBRARY_PATH="${LIB_DIR}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}" \
+    python3 "${SCRIPT_DIR}/tests.py" --tap \
+    | tee "${LOG_DIR}/helloworld-rust.tap" 2>&1
+
+test -f "${LOG_DIR}/helloworld-rust.tap" \
+    && grep -viq '^not ok' "${LOG_DIR}/helloworld-rust.tap"

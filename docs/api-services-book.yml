@@ -1,0 +1,19 @@
+type: books
+books:
+
+-
+    id: helloworld-rust-binding-doc
+    title: Helloworld Rust binding
+    description: Rust AFB Binding V4 sample showcasing binding development with afbv4 in redpesk
+    keywords:
+    chapters:
+    - url: 1-Overview.md
+      name: Overview
+    - url: 2-Build-and-installation.md
+      name: Build and installation
+    - url: 3-Configuration-and-usage.md
+      name: Configuration and usage
+    - url: 4-Api-reference.md
+      name: API reference
+    - url: 5-Validation-and-testing.md
+      name: Validation and testing

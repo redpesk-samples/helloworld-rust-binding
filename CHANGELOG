@@ -1,0 +1,5 @@
+2.0.0
+-----
+
+- Initial Rust implementation of the helloworld binding.
+- Functional API compatible with helloworld-binding 2.0.0.
