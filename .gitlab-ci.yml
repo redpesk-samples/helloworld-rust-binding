@@ -4,9 +4,6 @@ include:
 
 variables:
   RP_VERBOSE: "true"
-  # Use a project-specific variable name here because RP_REMOTE_FACTORY_PROJECT
-  # may be provided by GitLab project/group CI variables with higher precedence.
-  RP_HELLOWORLD_FACTORY_PROJECT: "test-helloworld-binding"
 
 stages:
   - lint
@@ -25,23 +22,21 @@ lint:
 
 build:
   stage: build
+  image: registry.redpesk.bzh/factory-test/rp-cli:latest
   extends:
     - .rp-cli-build
   script:
-    # Force the project selected by this repository at shell runtime.
-    - export RP_REMOTE_FACTORY_PROJECT="$RP_HELLOWORLD_FACTORY_PROJECT"
     - !reference [.rp-cli-build, script]
 
 redtest:
   stage: redtest
+  image: registry.redpesk.bzh/factory-test/rp-cli:latest
   needs:
     - build
   extends:
     - .rp-cli-start-test
   script:
-    # Use the same factory project as the build job.
-    - export RP_REMOTE_FACTORY_PROJECT="$RP_HELLOWORLD_FACTORY_PROJECT"
-    - '[ -n "$RP_DEBUG" ] && { set -x; rpcli connections current; }'
+    - '[ -n "$RP_DEBUG" ] && { set -x; rp-cli connections current; }'
     - |
       TEST_TMO=${RP_TEST_TIMEOUT:-${RP_TEST_DEFAULT_TIMEOUT}}
       if [ -n "$RP_VERBOSE" ]; then
